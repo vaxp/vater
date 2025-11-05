@@ -54,7 +54,7 @@ VAXPECO grants broad freedom to use, modify, distribute, and relicense the code 
 The project places a conditional requirement on re-using the `vater` name or attributing a modified app to VAXP-OS. Attribution is only permitted if **both** of the following are met:
 
 1. **Aesthetic Criteria (Vanta Class):** The modified project preserves the core Vanta Class / Black Glass visual style and does not remove or substantially alter the essential documented visual features.
-2. **Performance Criteria:** The modified project meets or exceeds the documented performance targets (for example, similar or better memory characteristics — ~55MB idle as documented).
+2. **Performance Criteria:** The modified project meets or exceeds the documented performance targets (for example, similar or better memory characteristics — ~65MB idle as documented).
 
 This requirement is intended to encourage either (a) respectful preservation of the VAXP identity when keeping the same name, or (b) differentiation under a new name when those criteria are not met.
 
