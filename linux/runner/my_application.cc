@@ -4,6 +4,8 @@
 #ifdef GDK_WINDOWING_X11
 #include <gdk/gdkx.h>
 #endif
+#include <unistd.h>
+#include <glib.h>
 
 #include "flutter/generated_plugin_registrant.h"
 
@@ -131,6 +133,14 @@ static gboolean my_application_local_command_line(GApplication* application, gch
 // Implements GApplication::startup.
 static void my_application_startup(GApplication* application) {
   //MyApplication* self = MY_APPLICATION(object);
+
+  // Change working directory to home directory
+  const gchar* home_dir = g_get_home_dir();
+  if (home_dir != nullptr) {
+    if (chdir(home_dir) != 0) {
+      g_warning("Failed to change directory to home: %s", home_dir);
+    }
+  }
 
   // Perform any actions required at application startup.
 
