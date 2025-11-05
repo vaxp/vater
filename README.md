@@ -1,3 +1,3 @@
-# xterm.dart demo
+# vater
 
-This package contains minimalistic xterm.dart examples.# vater
+
