@@ -54,6 +54,7 @@ class Home extends StatefulWidget {
   Home({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _HomeState createState() => _HomeState();
 }
 
@@ -117,7 +118,7 @@ class _HomeState extends State<Home> {
     setState(() {
       final newTab = TerminalTab(
         id: DateTime.now().toString(),
-        title: 'Terminal ${_tabs.length + 1}',
+        title: 'VaTer ${_tabs.length + 1}',
       );
       _tabs.add(newTab);
       _activeTabIndex = _tabs.length - 1;
@@ -179,6 +180,7 @@ class _HomeState extends State<Home> {
                           EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
                         color: isActive
+                            // ignore: deprecated_member_use
                             ? Colors.white.withOpacity(0.1)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(4),
@@ -194,13 +196,18 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                           SizedBox(width: 8),
-                          GestureDetector(
+                          NeonActionBtn(
+                            size: 20, // Smaller size for close button
                             onTap: () => _closeTab(index),
+                            colors: const [
+                              Colors.transparent,
+                              Colors.redAccent,
+                              Colors.orangeAccent,
+                              Colors.redAccent,
+                            ],
                             child: Icon(Icons.close,
-                                size: 14,
-                                color:
-                                    const Color.fromARGB(255, 255, 255, 255)),
-                          )
+                                size: 12, color: Colors.white54),
+                          ),
                         ],
                       ),
                     ),

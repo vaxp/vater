@@ -239,9 +239,20 @@ class NeonActionBtn extends StatefulWidget {
   final VoidCallback onTap;
   final Widget child;
   final double size;
+  final List<Color> colors;
 
-  const NeonActionBtn(
-      {super.key, required this.onTap, required this.child, this.size = 30});
+  const NeonActionBtn({
+    super.key,
+    required this.onTap,
+    required this.child,
+    this.size = 30,
+    this.colors = const [
+      Colors.transparent,
+      Colors.cyanAccent,
+      Colors.purpleAccent,
+      Colors.cyanAccent,
+    ],
+  });
 
   @override
   State<NeonActionBtn> createState() => _NeonActionBtnState();
@@ -283,7 +294,7 @@ class _NeonActionBtnState extends State<NeonActionBtn>
               turns: _controller,
               child: CustomPaint(
                 size: Size(widget.size, widget.size),
-                painter: _NeonRingPainter(),
+                painter: _NeonRingPainter(colors: widget.colors),
               ),
             ),
             // الأيقونة في المنتصف
@@ -296,6 +307,10 @@ class _NeonActionBtnState extends State<NeonActionBtn>
 }
 
 class _NeonRingPainter extends CustomPainter {
+  final List<Color> colors;
+
+  _NeonRingPainter({required this.colors});
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -313,14 +328,9 @@ class _NeonRingPainter extends CustomPainter {
     // التدرج اللوني (Venom Colors)
     // التدرج يبدأ شفافاً ثم سيان ثم بنفسجي ليعطي تأثير الذيل
     final Rect rect = Rect.fromCircle(center: center, radius: radius);
-    paint.shader = const SweepGradient(
-      colors: [
-        Colors.transparent,
-        Colors.cyanAccent,
-        Colors.purpleAccent,
-        Colors.cyanAccent, // تكرار اللون لغلق الحلقة بجمالية
-      ],
-      stops: [0.0, 0.5, 0.75, 1.0],
+    paint.shader = SweepGradient(
+      colors: colors,
+      stops: const [0.0, 0.5, 0.75, 1.0],
     ).createShader(rect);
 
     // رسم الحلقة
@@ -328,5 +338,5 @@ class _NeonRingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

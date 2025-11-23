@@ -47,6 +47,7 @@ class _HoverVaxpButtonState extends State<HoverVaxpButton> {
           width: 14,
           height: 14,
           decoration: BoxDecoration(
+            // ignore: deprecated_member_use
             color: _hovering ? widget.color.withOpacity(0.7) : widget.color,
             shape: BoxShape.circle,
           ),
