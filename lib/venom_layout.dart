@@ -10,11 +10,11 @@ class VenomScaffold extends StatefulWidget {
   final Widget? customTitle;
 
   const VenomScaffold({
-    Key? key,
+    super.key,
     required this.body,
     this.title = "vater",
     this.customTitle,
-  }) : super(key: key);
+  });
 
   @override
   State<VenomScaffold> createState() => _VenomScaffoldState();
