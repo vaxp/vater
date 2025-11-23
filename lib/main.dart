@@ -19,7 +19,7 @@ Future<void> main() async {
   WindowOptions windowOptions = const WindowOptions(
     size: Size(720, 620),
     center: true,
-    titleBarStyle: TitleBarStyle.hidden, // يخفي شريط مدير النوافذ
+    titleBarStyle: TitleBarStyle.hidden,
   );
 
   windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -42,10 +42,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'xterm.dart demo',
       debugShowCheckedModeBanner: false,
       home: AppPlatformMenu(child: Home()),
-      // shortcuts: ,
     );
   }
 }
