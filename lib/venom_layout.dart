@@ -106,7 +106,7 @@ class VenomAppbar extends StatelessWidget {
         await windowManager.startDragging();
       },
       child: Container(
-        height: 40,
+        height: 45,
         alignment: Alignment.centerRight,
         // خلفية نصف شفافة للشريط نفسه
         // color: const Color.fromARGB(100, 0, 0, 0),
