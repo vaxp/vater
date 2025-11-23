@@ -157,6 +157,13 @@ class _HomeState extends State<Home> {
       title: 'vater',
       customTitle: Row(
         children: [
+          IconButton(
+            icon: Icon(Icons.add, color: Colors.white, size: 18),
+            onPressed: _addNewTab,
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(),
+          ),
+          SizedBox(width: 8),
           Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -202,12 +209,6 @@ class _HomeState extends State<Home> {
               },
             ),
           ),
-          IconButton(
-            icon: Icon(Icons.add, color: Colors.white, size: 18),
-            onPressed: _addNewTab,
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
-          ),
         ],
       ),
       body: SafeArea(
@@ -247,3 +248,5 @@ String get shell {
 
   return 'sh';
 }
+
+
