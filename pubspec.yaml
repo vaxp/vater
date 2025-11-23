@@ -22,7 +22,6 @@ environment:
 
 dependencies:
   xterm:
-    path: ../
 
   dartssh2: ^2.5.0
 
@@ -42,6 +41,7 @@ dependencies:
   file_picker: ^6.1.1
 
   path: ^1.8.2
+  window_manager: ^0.5.1
 
 dev_dependencies:
   flutter_test:

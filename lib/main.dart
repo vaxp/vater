@@ -1,14 +1,31 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:vater/src/platform_menu.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pty/flutter_pty.dart';
+import 'package:vater/venom_layout.dart';
 import 'package:xterm/xterm.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main() {
+Future<void> main() async {
+      // Initialize Flutter bindings first to ensure the binary messenger is ready
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize window manager for desktop controls
+  await windowManager.ensureInitialized();
+
+  WindowOptions windowOptions = const WindowOptions(
+    size: Size(720, 620),
+    center: true,
+    titleBarStyle: TitleBarStyle.hidden, // يخفي شريط مدير النوافذ
+  );
+
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
   runApp(MyApp());
 }
 
@@ -88,8 +105,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(188, 0, 0, 0),
+    return VenomScaffold(
+      // backgroundColor: Color.fromARGB(188, 0, 0, 0),
       body: SafeArea(
         child: TerminalView(
           terminal,
