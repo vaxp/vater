@@ -10,7 +10,7 @@ import 'package:xterm/xterm.dart';
 import 'package:window_manager/window_manager.dart';
 
 Future<void> main() async {
-      // Initialize Flutter bindings first to ensure the binary messenger is ready
+  // Initialize Flutter bindings first to ensure the binary messenger is ready
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize window manager for desktop controls
@@ -54,31 +54,26 @@ class Home extends StatefulWidget {
   Home({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
-  final terminal = Terminal(
-    maxLines: 10000,
-  );
-
-  final terminalController = TerminalController();
-
+class TerminalTab {
+  final String id;
+  String title;
+  late final Terminal terminal;
+  late final TerminalController terminalController;
   late final Pty pty;
+  bool isInitialized = false;
 
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.endOfFrame.then(
-      (_) {
-        if (mounted) _startPty();
-      },
-    );
+  TerminalTab({required this.id, this.title = 'Terminal'}) {
+    terminal = Terminal(maxLines: 10000);
+    terminalController = TerminalController();
   }
 
-  void _startPty() {
+  void init() {
+    if (isInitialized) return;
+    isInitialized = true;
+
     pty = Pty.start(
       shell,
       columns: terminal.viewWidth,
@@ -103,27 +98,135 @@ class _HomeState extends State<Home> {
     };
   }
 
+  void dispose() {
+    // pty.kill(); // Optional: kill process when tab closes
+  }
+}
+
+class _HomeState extends State<Home> {
+  final List<TerminalTab> _tabs = [];
+  int _activeTabIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _addNewTab();
+  }
+
+  void _addNewTab() {
+    setState(() {
+      final newTab = TerminalTab(
+        id: DateTime.now().toString(),
+        title: 'Terminal ${_tabs.length + 1}',
+      );
+      _tabs.add(newTab);
+      _activeTabIndex = _tabs.length - 1;
+    });
+
+    // Initialize after frame to ensure layout for dimensions (though Pty.start might not strictly need it immediately if we use defaults, but following original pattern)
+    WidgetsBinding.instance.endOfFrame.then((_) {
+      if (mounted && _tabs.isNotEmpty) {
+        _tabs.last.init();
+      }
+    });
+  }
+
+  void _closeTab(int index) {
+    if (_tabs.length <= 1) return; // Don't close the last tab for now
+
+    setState(() {
+      _tabs[index].dispose();
+      _tabs.removeAt(index);
+      if (_activeTabIndex >= _tabs.length) {
+        _activeTabIndex = _tabs.length - 1;
+      }
+    });
+  }
+
+  void _setActiveTab(int index) {
+    setState(() {
+      _activeTabIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final activeTab = _tabs[_activeTabIndex];
+
     return VenomScaffold(
-      // backgroundColor: Color.fromARGB(188, 0, 0, 0),
+      title: 'vater',
+      customTitle: Row(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _tabs.length,
+              itemBuilder: (context, index) {
+                final tab = _tabs[index];
+                final isActive = index == _activeTabIndex;
+                return MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () => _setActiveTab(index),
+                    child: Container(
+                      margin: EdgeInsets.only(right: 4),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? Colors.white.withOpacity(0.1)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            tab.title,
+                            style: TextStyle(
+                              color: isActive ? Colors.white : Colors.white54,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () => _closeTab(index),
+                            child: Icon(Icons.close,
+                                size: 14, color: const Color.fromARGB(255, 255, 255, 255)),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.add, color: Colors.white, size: 18),
+            onPressed: _addNewTab,
+            padding: EdgeInsets.zero,
+            constraints: BoxConstraints(),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: TerminalView(
-          terminal,
-          controller: terminalController,
+          activeTab.terminal,
+          controller: activeTab.terminalController,
           autofocus: true,
           backgroundOpacity: 0.0,
           onSecondaryTapDown: (details, offset) async {
-            final selection = terminalController.selection;
+            final selection = activeTab.terminalController.selection;
             if (selection != null) {
-              final text = terminal.buffer.getText(selection);
-              terminalController.clearSelection();
+              final text = activeTab.terminal.buffer.getText(selection);
+              activeTab.terminalController.clearSelection();
               await Clipboard.setData(ClipboardData(text: text));
             } else {
               final data = await Clipboard.getData('text/plain');
               final text = data?.text;
               if (text != null) {
-                terminal.paste(text);
+                activeTab.terminal.paste(text);
               }
             }
           },

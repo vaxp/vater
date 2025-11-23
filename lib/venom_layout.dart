@@ -6,11 +6,13 @@ import 'package:window_manager/window_manager.dart';
 class VenomScaffold extends StatefulWidget {
   final Widget body; // محتوى الصفحة (الإعدادات)
   final String title;
+  final Widget? customTitle;
 
   const VenomScaffold({
     Key? key,
     required this.body,
     this.title = "vater",
+    this.customTitle,
   }) : super(key: key);
 
   @override
@@ -32,7 +34,7 @@ class _VenomScaffoldState extends State<VenomScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:Color.fromARGB(100, 0, 0, 0),
+      backgroundColor: Color.fromARGB(100, 0, 0, 0),
       body: Stack(
         children: [
           // --- الطبقة 1: محتوى التطبيق ---
@@ -68,6 +70,7 @@ class _VenomScaffoldState extends State<VenomScaffold> {
             right: 0,
             child: VenomAppbar(
               title: widget.title,
+              customTitle: widget.customTitle,
               // تمرير دالة للتحكم في البلور عند لمس الأزرار
               onHoverEnter: () => _setBlur(true),
               onHoverExit: () => _setBlur(false),
@@ -82,12 +85,14 @@ class _VenomScaffoldState extends State<VenomScaffold> {
 // 2. شريط العنوان المعدل (يرسل إشارات الهوفر)
 class VenomAppbar extends StatelessWidget {
   final String title;
+  final Widget? customTitle;
   final VoidCallback onHoverEnter;
   final VoidCallback onHoverExit;
 
   const VenomAppbar({
     Key? key,
     required this.title,
+    this.customTitle,
     required this.onHoverEnter,
     required this.onHoverExit,
   }) : super(key: key);
@@ -107,19 +112,22 @@ class VenomAppbar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         child: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0),
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left: 15.0),
+                child: customTitle ??
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
               ),
             ),
-            const Spacer(),
+            // const Spacer(), // Removed Spacer because Expanded above takes available space
 
             // مجموعة الأزرار
             // نستخدم MouseRegion واحد كبير حول الأزرار الثلاثة
@@ -135,7 +143,6 @@ class VenomAppbar extends StatelessWidget {
                     icon: Icons.remove,
                     onPressed: () => windowManager.minimize(),
                   ),
-
                   const SizedBox(width: 8),
                   VenomWindowButton(
                     color: const Color(0xFF28C840),
@@ -149,7 +156,6 @@ class VenomAppbar extends StatelessWidget {
                     },
                   ),
                   const SizedBox(width: 8),
-
                   VenomWindowButton(
                     color: const Color(0xFFFF5F57),
                     icon: Icons.close,
