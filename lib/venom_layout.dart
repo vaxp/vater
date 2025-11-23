@@ -32,7 +32,7 @@ class _VenomScaffoldState extends State<VenomScaffold> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:const Color.fromARGB(188, 0, 0, 0),
+      backgroundColor:Color.fromARGB(100, 0, 0, 0),
       body: Stack(
         children: [
           // --- الطبقة 1: محتوى التطبيق ---
