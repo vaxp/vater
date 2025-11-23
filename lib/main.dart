@@ -157,11 +157,9 @@ class _HomeState extends State<Home> {
       title: 'vater',
       customTitle: Row(
         children: [
-          IconButton(
-            icon: Icon(Icons.add, color: Colors.white, size: 18),
-            onPressed: _addNewTab,
-            padding: EdgeInsets.zero,
-            constraints: BoxConstraints(),
+          NeonActionBtn(
+            onTap: _addNewTab,
+            child: Icon(Icons.add, color: Colors.white, size: 18),
           ),
           SizedBox(width: 8),
           Expanded(
@@ -199,7 +197,9 @@ class _HomeState extends State<Home> {
                           GestureDetector(
                             onTap: () => _closeTab(index),
                             child: Icon(Icons.close,
-                                size: 14, color: const Color.fromARGB(255, 255, 255, 255)),
+                                size: 14,
+                                color:
+                                    const Color.fromARGB(255, 255, 255, 255)),
                           )
                         ],
                       ),
@@ -248,5 +248,3 @@ String get shell {
 
   return 'sh';
 }
-
-

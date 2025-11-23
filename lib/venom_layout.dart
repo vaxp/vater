@@ -1,4 +1,5 @@
 import 'dart:ui'; // مهم للـ ImageFilter
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -232,4 +233,100 @@ class _VenomWindowButtonState extends State<VenomWindowButton> {
       ),
     );
   }
+}
+
+class NeonActionBtn extends StatefulWidget {
+  final VoidCallback onTap;
+  final Widget child;
+  final double size;
+
+  const NeonActionBtn(
+      {super.key, required this.onTap, required this.child, this.size = 30});
+
+  @override
+  State<NeonActionBtn> createState() => _NeonActionBtnState();
+}
+
+class _NeonActionBtnState extends State<NeonActionBtn>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // تحكم في سرعة الدوران من هنا (ثانيتين للدورة الكاملة)
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(); // تكرار لا نهائي
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        width: widget.size, // حجم الزر
+        height: widget.size,
+        color: Colors.transparent, // ضروري ليعمل اللمس
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // طبقة الحلقة النيون الدوارة
+            RotationTransition(
+              turns: _controller,
+              child: CustomPaint(
+                size: Size(widget.size, widget.size),
+                painter: _NeonRingPainter(),
+              ),
+            ),
+            // الأيقونة في المنتصف
+            widget.child,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NeonRingPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width / 2) - 2; // نصف القطر Adjusted for smaller size
+
+    // إعداد فرشاة النيون
+    final Paint paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0 // سماكة الحلقة Adjusted
+      ..strokeCap = StrokeCap.round
+      // تأثير التوهج (Neon Glow)
+      ..maskFilter =
+          const MaskFilter.blur(BlurStyle.solid, 2.0); // Adjusted blur
+
+    // التدرج اللوني (Venom Colors)
+    // التدرج يبدأ شفافاً ثم سيان ثم بنفسجي ليعطي تأثير الذيل
+    final Rect rect = Rect.fromCircle(center: center, radius: radius);
+    paint.shader = const SweepGradient(
+      colors: [
+        Colors.transparent,
+        Colors.cyanAccent,
+        Colors.purpleAccent,
+        Colors.cyanAccent, // تكرار اللون لغلق الحلقة بجمالية
+      ],
+      stops: [0.0, 0.5, 0.75, 1.0],
+    ).createShader(rect);
+
+    // رسم الحلقة
+    canvas.drawArc(rect, 0, math.pi * 2, false, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
